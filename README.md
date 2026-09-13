@@ -21,7 +21,8 @@ synthesized terminal audio cues. One is amber phosphor, one is Pip-Boy green.
 
 ## Install
 
-Only one token theme can be active at a time — pick one.
+Both skins can be installed at the same time: they share a registry and only one stays
+active, switched with a floating button in the bottom-right corner or `Alt` + `Shift` + `S`.
 
 ```sh
 # amber phosphor CRT

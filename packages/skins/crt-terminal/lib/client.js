@@ -290,21 +290,170 @@ body::after {
 			return node.closest(CONTROL_SELECTOR);
 		}
 		//#endregion
+		//#region skin coordination
 		/**
-		* Mount the stylesheet and the audio cues as one disposable effect, so
-		* unloading the plugin removes the style tag and every listener again.
+		* Both skins in this repository are meant to be installed together, but only
+		* one may be active at a time: they pin the same design tokens with
+		* !important, so two enabled sheets produce last-one-wins flicker instead of
+		* a blend. The pair coordinates through one shared localStorage key and a
+		* registry on window, and either bundle can drive the switcher.
+		*/
+		const ACTIVE_KEY = "dsh-crt-skins:active";
+		/** This skin's identity, as shown by the shared switcher. */
+		const SKIN = { id: "crt-terminal", label: "CRT 琥珀", short: "CRT", accent: "#ffb648" };
+		/**
+		* The shared registry. Whichever skin loads first creates it and the other
+		* reuses the very same object, which is what makes the pair switchable.
+		* @returns the registry.
+		*/
+		function registry() {
+			if (window.__dshCrtSkins !== void 0) return window.__dshCrtSkins;
+			const skins = {};
+			const order = [];
+			const api = {
+				skins,
+				order,
+				button: null,
+				/** Show the next registered skin. */
+				toggle() {
+					if (order.length < 2) return;
+					const at = order.indexOf(api.active());
+					api.setActive(order[(at + 1) % order.length]);
+				},
+				/** @returns the id of the skin that should be showing. */
+				active() {
+					let id = "";
+					try {
+						id = window.localStorage.getItem(ACTIVE_KEY) || "";
+					} catch (error) {
+						id = "";
+					}
+					return skins[id] === void 0 ? order[0] || "" : id;
+				},
+				/**
+				* @param id - the skin to show.
+				*/
+				setActive(id) {
+					if (skins[id] === void 0) return;
+					try {
+						window.localStorage.setItem(ACTIVE_KEY, id);
+					} catch (error) {
+						/* storage unavailable: the choice lasts for this page only */
+					}
+					api.paint();
+					for (const key of order) skins[key].onActive(id);
+				},
+				/** Enable exactly one sheet, then refresh the switcher chrome. */
+				paint() {
+					const id = api.active();
+					for (const key of order) {
+						const entry = skins[key];
+						entry.active = key === id;
+						entry.style.disabled = !entry.active;
+					}
+					api.render();
+				},
+				/** Repaint the floating switcher. */
+				render() {
+					if (api.button === null) return;
+					const entry = skins[api.active()];
+					if (entry === void 0) return;
+					api.button.textContent = "⇄ " + entry.short;
+					api.button.title = "皮肤：" + entry.label + "（点击切换，Alt+Shift+S）";
+					api.button.style.color = entry.accent;
+					api.button.style.borderColor = entry.accent;
+				},
+				/** Mount the floating switcher, once per page and only when it can do something. */
+				mount() {
+					if (api.button !== null || order.length < 2) return;
+					if (document.body === void 0 || document.body === null) return;
+					const b = document.createElement("button");
+					b.type = "button";
+					b.className = "dsh-crt-skins-switch";
+					b.style.cssText = "position:fixed;right:14px;bottom:14px;z-index:2147483500;padding:4px 10px;border-radius:3px;border:1px solid;background:rgba(0,0,0,.75);font:12px/1.6 \'Lucida Console\',\'Courier New\',monospace;letter-spacing:.5px;cursor:pointer;opacity:.5";
+					b.addEventListener("pointerenter", () => {
+						b.style.opacity = "1";
+					});
+					b.addEventListener("pointerleave", () => {
+						b.style.opacity = ".5";
+					});
+					b.addEventListener("click", (event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						api.toggle();
+						announce();
+					});
+					document.body.appendChild(b);
+					api.button = b;
+					api.render();
+				},
+				/**
+				* @param entry - {id, label, short, accent, style, onActive}
+				*/
+				register(entry) {
+					skins[entry.id] = entry;
+					if (!order.includes(entry.id)) order.push(entry.id);
+					api.paint();
+					api.mount();
+				},
+				/**
+				* @param id - the skin being unloaded.
+				*/
+				unregister(id) {
+					delete skins[id];
+					const at = order.indexOf(id);
+					if (at >= 0) order.splice(at, 1);
+					if (order.length === 0) api.teardown();
+					else api.paint();
+				},
+				/** Last skin gone: drop the switcher with it. */
+				teardown() {
+					if (api.button !== null) {
+						api.button.remove();
+						api.button = null;
+					}
+				}
+			};
+			window.__dshCrtSkins = api;
+			return api;
+		}
+		/** Two-tone blip when the pair is switched, so the change is audible too. */
+		function announce() {
+			const ctx = audioContext();
+			if (ctx === null || !soundOn) return;
+			tone(ctx, 380, 0.04, 0.03, 0, "square");
+			tone(ctx, 560, 0.05, 0.026, 0.045, "square");
+		}
+		//#endregion
+		/**
+		* Mount the stylesheet, the switcher entry and the audio cues as one
+		* disposable effect, so unloading the plugin removes the style tag, the
+		* switcher entry and every listener again.
 		* @param ctx - client plugin context.
 		*/
 		function apply(ctx) {
 			ctx.effect(() => {
 				const style = document.createElement("style");
 				style.dataset.plugin = "crt-terminal";
+				style.dataset.skin = "crt-terminal";
 				style.textContent = css;
 				document.head.appendChild(style);
+				const reg = registry();
+				/** Only the active skin may make noise. */
+				const mine = () => reg.active() === SKIN.id;
+				reg.register({
+					id: SKIN.id,
+					label: SKIN.label,
+					short: SKIN.short,
+					accent: SKIN.accent,
+					style,
+					onActive: () => {}
+				});
 				let hovered = null;
 				let lastTick = 0;
 				const onPointerOver = (event) => {
-					if (!soundOn) return;
+					if (!soundOn || !mine()) return;
+
 					const control = controlOf(event.target);
 					if (control === null) {
 						hovered = null;
@@ -318,15 +467,28 @@ body::after {
 					cueHover();
 				};
 				const onPointerDown = (event) => {
-					if (soundOn && controlOf(event.target) !== null) cueSelect();
+					if (soundOn && mine() && controlOf(event.target) !== null) cueSelect();
 				};
 				const onKeyDown = (event) => {
-					if (event.altKey && event.shiftKey && event.key.toLowerCase() === "m") {
-						event.preventDefault();
-						setSound(!soundOn);
-						return;
+					if (event.altKey && event.shiftKey) {
+						const combo = event.key.toLowerCase();
+						if (combo === "s") {
+							event.preventDefault();
+							/* Both installed bundles see this keypress. Only the first one may
+							   drive the pair, or the two toggles cancel each other out. */
+							if (reg.order[0] === SKIN.id) {
+								reg.toggle();
+								announce();
+							}
+							return;
+						}
+						if (combo === "m") {
+							event.preventDefault();
+							setSound(!soundOn);
+							return;
+						}
 					}
-					if (!soundOn || event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
+					if (!soundOn || !mine() || event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
 					if (event.key === "Enter") {
 						cueKey("enter");
 						return;
@@ -342,6 +504,7 @@ body::after {
 				document.addEventListener("keydown", onKeyDown, true);
 				return () => {
 					style.remove();
+					reg.unregister(SKIN.id);
 					document.removeEventListener("pointerover", onPointerOver, true);
 					document.removeEventListener("pointerdown", onPointerDown, true);
 					document.removeEventListener("keydown", onKeyDown, true);
@@ -352,8 +515,8 @@ body::after {
 		exports.apply = apply;
 		exports.name = name;
 		exports.sound = { set: setSound, isOn: isSoundOn };
-		/** Console handle: window.dshCrtTerminal.sound.set(false) mutes the cues. */
-		window.dshCrtTerminal = { sound: { set: setSound, isOn: isSoundOn } };
+		/** Console handle: window.__dshCrtSkins.toggle() switches the pair. */
+		window.dshCrtTerminal = { sound: { set: setSound, isOn: isSoundOn }, skin: SKIN, registry };
 		return module.exports;
 	}
 });

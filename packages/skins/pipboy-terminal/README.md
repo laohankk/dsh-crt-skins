@@ -70,12 +70,22 @@ It is also exported as `exports.sound` on the client module, for other plugins.
 Cues are suppressed while any modifier key is held, and key auto-repeat is
 ignored, so shortcuts and held keys stay quiet.
 
-## Conflicts
+## Switching between the pair
 
-**Do not run this together with another token theme.** Themes in this family pin
-design tokens with `!important`, so two of them active at once produce
-last-one-wins flicker rather than a blend. Deactivate other skins — including
-its green sibling `dsh-crt-terminal` — before installing this one.
+Install both skins in this repository — `dsh-pipboy-terminal` and
+[`dsh-crt-terminal`](../crt-terminal) — and they cooperate rather than
+fight. Two token themes enabled at once would otherwise produce last-one-wins
+flicker, so the two bundles share a registry and only one sheet stays enabled at
+a time (the other is `disabled`, not removed, so switching is instant).
+
+- a small **button in the bottom-right corner** shows the active skin
+  (`⇄ PIP` / `⇄ CRT`) — click it to switch
+- **`Alt` + `Shift` + `S`** does the same from the keyboard
+- the choice lives in `localStorage["dsh-crt-skins:active"]` and survives reloads
+- **only the active skin makes sound**, so you never get two sets of key clicks
+- `window.__dshCrtSkins.setActive("crt-terminal")` from the console also works
+
+Installed alone, a skin is always active and the switcher button stays hidden.
 
 ## What it does
 
