@@ -1,0 +1,46 @@
+{
+  "name": "dsh-crt-terminal",
+  "version": "1.0.0",
+  "description": "Green phosphor CRT terminal theme for DeepSeek Harness: mono palette, phosphor bloom, scanlines, curved-screen vignette and boxed panels.",
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-skin",
+    "dsh-theme",
+    "crt",
+    "terminal",
+    "phosphor",
+    "retro"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  }
+}

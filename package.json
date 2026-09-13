@@ -1,0 +1,14 @@
+{
+  "name": "dsh-crt-skins",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Two retro terminal skins for the DeepSeek Harness Web UI: a green phosphor CRT terminal and a Fallout-style Pip-Boy amber screen.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/skins/*"
+  ],
+  "scripts": {
+    "verify": "node tools/verify.cjs"
+  }
+}

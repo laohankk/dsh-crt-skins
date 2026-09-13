@@ -1,0 +1,6 @@
+# Inserts the CRT Terminal theme into the composition as its own row.
+# `name` references this package so Node resolution finds the installed code
+# rather than a relative source path.
+- insert:
+    - id: crt-terminal
+      name: dsh-crt-terminal

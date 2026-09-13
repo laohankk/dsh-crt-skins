@@ -1,0 +1,47 @@
+{
+  "name": "dsh-pipboy-terminal",
+  "version": "1.0.0",
+  "description": "Fallout-style Pip-Boy amber phosphor theme for DeepSeek Harness: warm amber palette, Vault-Tec corner frames, glass sheen instead of scanlines, plus synthesized terminal audio cues.",
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-skin",
+    "dsh-theme",
+    "pipboy",
+    "fallout",
+    "amber",
+    "phosphor",
+    "retro"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  }
+}
