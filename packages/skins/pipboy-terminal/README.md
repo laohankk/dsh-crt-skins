@@ -1,6 +1,6 @@
 # dsh-pipboy-terminal
 
-A **Fallout-style Pip-Boy green theme** for the DeepSeek Harness Web UI.
+A **Fallout-style Pip-Boy green theme** for the DeepSeek Harness UI (Web and desktop).
 
 Classic Pip-Boy green phosphor ramp, Vault-Tec corner brackets on the panels, a glass sheen
 instead of scanlines, and synthesized terminal audio cues. No assets, no fonts,
@@ -12,6 +12,14 @@ Audio for the sound.
 Part of [`dsh-crt-skins`](https://github.com/laohankk/dsh-crt-skins). The sister
 skin is [`dsh-crt-terminal`](../crt-terminal) — the same treatment in amber
 phosphor, with scanlines, corner vignette and a slow flicker.
+
+## Compatibility
+
+- Verified on Windows 11 against **DSH Web `0.1.5-rc.1`** and the **DSH desktop app `0.1.7-rc.2`**.
+- Uses only documented design tokens, the client plugin API (`dsh.client` / `dsh.bundle`) and
+  Web Audio; no private DOM. Newer DSH builds are expected to keep working — please open an
+  issue with a screenshot if a panel frame or a token looks wrong.
+- Install target: GitHub source (`github:laohankk/dsh-crt-skins`), not published to npm.
 
 ## Install
 

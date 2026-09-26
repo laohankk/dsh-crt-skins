@@ -1,6 +1,6 @@
 # dsh-crt-terminal
 
-A **amber phosphor CRT terminal theme** for the DeepSeek Harness Web UI.
+A **amber phosphor CRT terminal theme** for the DeepSeek Harness UI (Web and desktop).
 
 Amber palette, phosphor bloom, scanlines, curved-screen vignette, square corners,
 boxed panels with corner brackets — plus synthesized terminal audio cues. No
@@ -12,6 +12,14 @@ exposes, and Web Audio for the sound.
 Part of [`dsh-crt-skins`](https://github.com/laohankk/dsh-crt-skins). The sister
 skin is [`dsh-pipboy-terminal`](../pipboy-terminal) — the same idea in Fallout
 Pip-Boy green, with a stable screen instead of scanlines, and the pair can be switched at runtime.
+
+## Compatibility
+
+- Verified on Windows 11 against **DSH Web `0.1.5-rc.1`** and the **DSH desktop app `0.1.7-rc.2`**.
+- Uses only documented design tokens, the client plugin API (`dsh.client` / `dsh.bundle`) and
+  Web Audio; no private DOM. Newer DSH builds are expected to keep working — please open an
+  issue with a screenshot if a panel frame or a token looks wrong.
+- Install target: GitHub source (`github:laohankk/dsh-crt-skins`), not published to npm.
 
 ## Install
 

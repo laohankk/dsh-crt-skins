@@ -55,7 +55,7 @@ node tools/verify.cjs
 
 ## Compatibility
 
-Verified against **DSH Web `0.1.5-rc.1`** on Windows 11. Both skins are
+Verified against **DSH Web `0.1.5-rc.1`** and the **DSH desktop app `0.1.7-rc.2`** on Windows 11. Both skins are
 client-only: the Node half is deliberately inert, and the stylesheet and audio
 listeners are mounted as one disposable effect, so removing the plugin removes
 everything again.
