@@ -1,6 +1,6 @@
 {
   "name": "dsh-pipboy-terminal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Fallout-style Pip-Boy amber phosphor theme for DeepSeek Harness: warm amber palette, Vault-Tec corner frames, glass sheen instead of scanlines, plus synthesized terminal audio cues.",
   "type": "module",
   "main": "lib/index.js",

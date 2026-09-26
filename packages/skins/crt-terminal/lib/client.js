@@ -112,7 +112,12 @@ button[aria-label="新建会话"], button[aria-label="New session"] { border-rad
    occupy ::before/::after, so the brackets cannot collide with anything.
    position:relative is un-!important and low-specificity on purpose: it only
    applies when a panel declares no position of its own. */
-body :where([data-sidebar-right-panel], [data-cordis-panel], [data-queue-dock]) { position: relative; border-radius: 4px !important; box-shadow: inset 0 0 0 1px rgba(255,182,72,.36), 0 0 20px rgba(0,0,0,.45) !important; }
+/* The docked right sidebar is empty in most views (the welcome screen), and a
+   full 1px ring around an empty region reads as a stray rule running down the
+   middle of the window. It therefore gets the corner brackets only; panels
+   that exist only while open keep the complete bezel. */
+body :where([data-cordis-panel], [data-queue-dock]) { position: relative; border-radius: 4px !important; box-shadow: inset 0 0 0 1px rgba(255,182,72,.36), 0 0 20px rgba(0,0,0,.45) !important; }
+body [data-sidebar-right-panel] { position: relative; border-radius: 4px !important; }
 body :where([data-sidebar-right-panel], [data-cordis-panel], [data-queue-dock])::before,
 body :where([data-sidebar-right-panel], [data-cordis-panel], [data-queue-dock])::after { content: ""; position: absolute; width: 14px; height: 14px; pointer-events: none; z-index: 2; }
 body :where([data-sidebar-right-panel], [data-cordis-panel], [data-queue-dock])::before { top: -1px; left: -1px; border-top: 2px solid #ffb648; border-left: 2px solid #ffb648; }

@@ -1,6 +1,6 @@
 {
   "name": "dsh-crt-terminal",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Green phosphor CRT terminal theme for DeepSeek Harness: mono palette, phosphor bloom, scanlines, curved-screen vignette and boxed panels.",
   "type": "module",
   "main": "lib/index.js",
